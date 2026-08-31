@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ROTK field guide</title>
+  <meta name="description" content="Unofficial field guide to Return of the King (ROTK), an independent H1Z1 / Z1 Battle Royale server emulator." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="nav">
+      <p class="brand">ROTK field guide</p>
+      <p class="muted small">Unofficial notes · 2026-08-31</p>
+      <nav>
+        <a href="#overview">What ROTK is</a>
+        <a href="#play">How to play</a>
+        <a href="#stack">Architecture</a>
+        <a href="#servers">Servers</a>
+        <a href="#network">Network map</a>
+        <a href="#launcher">Launcher &amp; client</a>
+        <a href="#assets">Asset packs</a>
+        <a href="#integrity">Integrity</a>
+        <a href="#observe">What you can observe</a>
+        <a href="#limits">Limits &amp; leftovers</a>
+        <a href="#sources">Sources</a>
+      </nav>
+    </aside>
+
+    <main>
+      <header class="hero">
+        <h1>ROTK field guide</h1>
+        <p>
+          Return of the King is an independent, non-commercial
+          <strong>H1Z1: King of the Kill / Z1 Battle Royale</strong>
+          server emulator. It rebuilds the missing server side and talks to a
+          client you already own. It does not own H1Z1, and it does not
+          redistribute the game.
+        </p>
+        <ul class="stats">
+          <li><strong>1.4.2</strong><span>Launcher</span></li>
+          <li><strong>1.2.0</strong><span>Asset pack feed</span></li>
+          <li><strong>BR1315</strong><span>Client build</span></li>
+          <li><strong>255 / 2000</strong><span>GAME 2 players (sampled)</span></li>
+        </ul>
+        <p class="muted small">
+          Population from <a href="https://rotk.app/api/status">rotk.app/api/status</a>
+          at 2026-08-31 15:16 UTC. Count only; no names. This page is not affiliated
+          with Daybreak Game Company.
+        </p>
+      </header>
+
+      <section id="overview">
+        <h2>What ROTK is</h2>
+        <p>
+          Online games need a client and a server. Daybreak shut down the original
+          H1Z1 services. ROTK rebuilds authentication, worlds, players,
+          inventories, combat, matchmaking, and game rules so a legitimate Z1
+          Battle Royale install can talk to community servers again.
+        </p>
+        <blockquote>
+          “We are not recreating the H1Z1 client. We are building a server capable
+          of communicating with it.”
+          <cite>— rotk.app/project</cite>
+        </blockquote>
+        <div class="cards">
+          <article>
+            <h3>They build</h3>
+            <p>Server software and web services: accounts on rotk.app, launch tickets, zone/login, MOTD gateway, voice grants, attestation.</p>
+          </article>
+          <article>
+            <h3>They connect to</h3>
+            <p>Your existing H1Z1 / Z1BR client (build 1.0.326.439939, also called BR1315). Client code, art, audio, and names stay Daybreak’s.</p>
+          </article>
+          <article>
+            <h3>Stance</h3>
+            <p>Independent preservation. No paid access, cosmetics, or gameplay advantages. Donations, if ever, infrastructure only.</p>
+          </article>
+        </div>
+        <table>
+          <thead>
+            <tr><th>Piece</th><th>Where</th><th>Role</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Website / accounts</td><td><a href="https://rotk.app">rotk.app</a></td><td>Steam login, launcher keys, news, status</td></tr>
+            <tr><td>Test website</td><td><a href="https://test.rotk.app">test.rotk.app</a></td><td>Same contract on the test VPS</td></tr>
+            <tr><td>Launcher</td><td><a href="https://github.com/MzKaxD/rotk-launcher">MzKaxD/rotk-launcher</a></td><td>GPL-3.0 copy, configure, launch H1Z1.exe</td></tr>
+            <tr><td>Asset feed</td><td><a href="https://github.com/h1z1rotk/assets">h1z1rotk/assets</a></td><td>feed.json + GitHub Release zips</td></tr>
+            <tr><td>Game server</td><td>private</td><td>Login + zone emulator — not in the assets catalog</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="play">
+        <h2>How to play</h2>
+        <p>
+          ROTK does not download H1Z1. You need Z1 Battle Royale on Steam. The
+          launcher copies that install into an isolated folder (often
+          <code>C:\Games\ROTK</code>) and never writes back into steamapps.
+        </p>
+        <table>
+          <thead>
+            <tr><th>Step</th><th>Detail</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1. Account</td><td>Sign in with Steam on rotk.app. Avatar → Account settings → generate a 32-character launcher key.</td></tr>
+            <tr><td>2. Launcher</td><td>Install ROTK Launcher 1.4.2 (Windows 10/11 x64). Paste the key. It is stored with Windows DPAPI, not in ClientConfig.ini.</td></tr>
+            <tr><td>3. Client</td><td>Point at Steam Z1BR as the copy source, or adopt an already-isolated client. Expected exe: H1Z1.exe BR1315 / 1.0.326.439939.</td></tr>
+            <tr><td>4. Play</td><td>Launcher fetches a one-time ticket over HTTPS, writes ClientConfig.ini, syncs asset packs, then starts H1Z1.exe with ROTK arguments.</td></tr>
+          </tbody>
+        </table>
+        <p class="note">
+          Player and admin keys are different ROTK accounts. The launcher keeps
+          four slots (GAME 2 / TEST × player / admin). An unconfigured launcher
+          always defaults to GAME 2, never test.
+        </p>
+        <p>
+          Play guide: <a href="https://rotk.app/play">rotk.app/play</a> ·
+          Launcher: <a href="https://github.com/MzKaxD/rotk-launcher/releases">releases</a>
+        </p>
+      </section>
+
+      <section id="stack">
+        <h2>Architecture</h2>
+        <p>Five moving parts. The H1Z1.exe you launch is still Forgelight; almost everything ROTK-specific sits around it.</p>
+        <table>
+          <thead>
+            <tr><th>Layer</th><th>What it is</th><th>You touch it?</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>H1Z1.exe</td><td>Original BR1315 client. SHA-256 5F5A4922…9261, ~82 MB. Not modified on disk.</td><td>Copied from Steam; protected from asset-pack overwrite</td></tr>
+            <tr><td>ROTK Launcher</td><td>Electron app: copy, config, ticket, asset sync, Vivox 5 + crouch proxy, attestation.</td><td>Yes — open source</td></tr>
+            <tr><td>rotk.app</td><td>Accounts, keys, tickets, news, /api/status, Vivox grant relay, attestation challenge.</td><td>Browser + launcher HTTPS</td></tr>
+            <tr><td>Gateway :8080</td><td>HTTP MOTD / telemetry / leftover Daybreak-shaped URLs (h1z1xx/live, /query).</td><td>Client talks to it; plaintext HTTP</td></tr>
+            <tr><td>Login + zone UDP</td><td>LoginUdp_16 on 20042–20045, then a new UDP port for the zone (seen: 20126, 20132).</td><td>Game traffic; encrypted after handshake</td></tr>
+            <tr><td>Asset feed</td><td>feed.json on GitHub main; zips on Releases. Installed into Resources/Assets.</td><td>h1z1rotk/assets</td></tr>
+          </tbody>
+        </table>
+        <h3>Launch order</h3>
+        <ol>
+          <li>HTTPS ticket from rotk.app</li>
+          <li>Optional GitHub asset sync</li>
+          <li>Write ClientConfig.ini (servers, local Steam gateway, :8080 URIs)</li>
+          <li>Deploy / verify vivoxsdk_x64.dll proxy + Vivox 5 + rotk-crouch-parity.ini</li>
+          <li>Attest install hashes to the backend</li>
+          <li>Spawn H1Z1.exe</li>
+          <li>Client HTTP to :8080, then UDP login, then zone transfer</li>
+        </ol>
+      </section>
+
+      <section id="servers">
+        <h2>Servers</h2>
+        <p>The launcher hard-codes two bounded contracts. Picking a server switches gateway, login, website, tickets, and attestation together.</p>
+        <div class="cards two">
+          <article>
+            <h3>GAME 2 <span class="tag">default</span></h3>
+            <ul>
+              <li>Host <code>162.19.94.95</code></li>
+              <li>Login UDP 20042–20045</li>
+              <li>Gateway <code>http://162.19.94.95:8080</code></li>
+              <li>Site / tickets <a href="https://rotk.app">https://rotk.app</a></li>
+              <li>Status capacity 2000</li>
+            </ul>
+          </article>
+          <article>
+            <h3>ROTK TEST <span class="tag">dev</span></h3>
+            <ul>
+              <li>Host <code>51.255.160.224</code></li>
+              <li>Same login port list</li>
+              <li>Gateway <code>http://51.255.160.224:8080</code></li>
+              <li>Site / tickets <a href="https://test.rotk.app">https://test.rotk.app</a></li>
+              <li>Unconfigured launchers never land here</li>
+            </ul>
+          </article>
+        </div>
+        <p class="note">
+          <code>GET https://rotk.app/api/status</code> returns players, capacity,
+          online, and sampledAt. The launcher footer polls both GAME 2 and TEST
+          every 60s. Names are not public. In-match nametags are the only
+          player-visible identity besides your own logs.
+        </p>
+      </section>
+
+      <section id="network">
+        <h2>Network map</h2>
+        <p>
+          From ClientConfig.ini plus a GAME 2 capture on the real NIC (~56s,
+          18,688 frames). Loopback (Steam mini-gateway) was not in that capture.
+        </p>
+        <table>
+          <thead>
+            <tr><th>Path</th><th>Cleartext?</th><th>What it is</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>TCP 443 SNI rotk.app</td><td>No (TLS)</td><td>Launcher ticket, identity, attestation, voice grants. Same IP as GAME 2.</td></tr>
+            <tr><td>TCP 443 GitHub / raw / release-assets</td><td>No (TLS)</td><td>feed.json and asset zip downloads</td></tr>
+            <tr><td>TCP 8080 HTTP</td><td>Yes</td><td>POST /h1z1xx/live/send-event (eventId, gameCode, soegvid); GET MOTD /query. Empty MOTD was [] in the sample.</td></tr>
+            <tr><td>UDP 20045 LoginUdp_16</td><td>Handshake only</td><td>SOE SessionRequest includes ASCII LoginUdp_16, then SessionReply, then compressed/encrypted data.</td></tr>
+            <tr><td>UDP 20126 then 20132</td><td>No after crypto</td><td>Zone. Config lists only 20042–20045; the server hands you a new port. Tiny packets = in match.</td></tr>
+            <tr><td>Vivox (unity / mtu1xp.vivox.com)</td><td>No (TLS)</td><td>Voice, not Wwise gun SFX</td></tr>
+            <tr><td>127.0.0.1 Steam gateway</td><td>HTTP on loopback</td><td>H1Z1 asks the launcher for a session. Durable key never goes here. Capture Npcap Loopback to see it.</td></tr>
+          </tbody>
+        </table>
+        <p>Useful Wireshark display filter for GAME 2:</p>
+        <pre>ip.addr == 162.19.94.95 or tls.handshake.extensions_server_name == "rotk.app"</pre>
+        <p>
+          Wireshark on your PC shows <em>your</em> connect, not other players
+          joining. Their login UDP never hits your NIC.
+        </p>
+      </section>
+
+      <section id="launcher">
+        <h2>Launcher and client</h2>
+        <h3>H1Z1 client (BR1315)</h3>
+        <table>
+          <thead>
+            <tr><th>Fact</th><th>Value</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Build id</td><td>1.0.326.439939</td></tr>
+            <tr><td>H1Z1.exe size</td><td>82,158,616 bytes</td></tr>
+            <tr><td>H1Z1.exe SHA-256</td><td><code>5f5a4922b0671e4ed8fd415e753be096ef7a17e360ae80e025f11544c8db9261</code></td></tr>
+            <tr><td>Base manifest</td><td>563 files, ~17.8 GB, signed rotk-attest-2026-08</td></tr>
+          </tbody>
+        </table>
+        <h3>Launcher 1.4.2 (2026-08-17)</h3>
+        <p>
+          Electron + React, EN/FR, GPL-3.0-or-later. Copies from Steam with
+          SHA-256 checks. Remembers install in
+          <code>%APPDATA%\ROTK Launcher</code>. Native bits:
+          <code>steam_api64.dll</code> shim (Zig 0.15.2) and a Vivox 5 proxy that
+          also carries crouch parity v12.
+        </p>
+        <h3>Crouch patch</h3>
+        <p>
+          The hook lives in <code>vivoxsdk_x64.dll</code> so H1Z1.exe is never
+          patched on disk. It only activates in memory on the exact BR1315
+          hash/PE. It replaces crouch pose blend weight; camera hook stays off
+          to protect ADS. v12 uses a 256-entry animation-network cache for
+          crowded Solos. Files are verified at install, adopt, pre-attestation,
+          and immediately before spawn.
+        </p>
+        <h3>Auth flow</h3>
+        <p>
+          Steam on rotk.app → 32-char key → launcher POST over HTTPS → one-time
+          ticket + ROTKID + GameAccountGUID + SteamID + name. Client only sees
+          the short ticket via localhost gateway. Durable key is not written
+          into ClientConfig.ini.
+        </p>
+      </section>
+
+      <section id="assets">
+        <h2>Asset packs</h2>
+        <p>
+          The assets catalog is not the game. The launcher reads
+          <code>feed.json</code> from
+          <a href="https://github.com/h1z1rotk/assets">h1z1rotk/assets</a>
+          before every launch. Binaries live on GitHub Releases
+          (<code>assets-v1.2.0</code> / <code>assets-v1.1.0</code>). Current
+          packVersion <strong>1.2.0</strong>.
+        </p>
+        <table>
+          <thead>
+            <tr><th>Pack</th><th>Ver</th><th>Zip (approx)</th><th>Installs to</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>assets_x64_0</td><td>1.2.0</td><td>1.32 GB</td><td>Resources/Assets</td></tr>
+            <tr><td>assets_x64_1</td><td>1.2.0</td><td>128 MB</td><td>Resources/Assets</td></tr>
+            <tr><td>assets_x64_10</td><td>1.1.0</td><td>125 MB</td><td>Resources/Assets</td></tr>
+            <tr><td>assets_x64_15</td><td>1.1.0</td><td>467 MB</td><td>Resources/Assets (vanilla assets_x64_0 hash)</td></tr>
+            <tr><td>assets_x64_16</td><td>1.1.0</td><td>458 MB</td><td>Resources/Assets (vanilla assets_x64_1 hash)</td></tr>
+            <tr><td>LoginZone_x64_0 / _1</td><td>1.1.0</td><td>~27 MB each</td><td>Resources/Assets</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Unpacked, <code>assets_x64_0.pack2</code> is ~2.47 GB (custom).
+          assets_x64_15/16 match the original client’s assets_x64_0/1 hashes.
+          UI packs (<code>ui_x64_*</code>) and audio (<code>Resources/Audio/pc9</code>)
+          are not in this feed — they come with the Steam copy.
+        </p>
+        <p class="note">
+          Launcher rules: HTTPS GitHub only. SHA-256 + exact size. No
+          exe/dll/scripts. Cannot overwrite H1Z1.exe, ClientConfig.ini,
+          steam_api64.dll. Zip entries must use <code>/</code>. Max 3 GB per
+          asset, 8 GB total. <code>feed.json</code> and
+          <code>asset-payloads.v1.json</code> must be committed together or
+          attestation <code>root_mismatch</code> follows.
+        </p>
+      </section>
+
+      <section id="integrity">
+        <h2>Integrity attestation</h2>
+        <p>
+          Before a launch ticket is consumed, the launcher proves the install is
+          the signed base manifest plus the official asset-payload hashes. That
+          exists so client-side cheats like stripping smoke assets are visible
+          to the backend.
+        </p>
+        <table>
+          <thead>
+            <tr><th>File</th><th>Job</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>base-manifest.v1.json</td><td>SHA-256 of a clean BR1315 tree (563 files). Server folds this into the expected root.</td></tr>
+            <tr><td>asset-payloads.v1.json</td><td>SHA-256 of the unpacked .pack2 files after install. Must match the live feed.</td></tr>
+            <tr><td>feed.json</td><td>What launchers download. URLs, zip hashes, versions.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          UserOptions.ini (graphics/audio) and InputProfile_User.xml are excluded
+          from the root so settings do not fail attestation.
+        </p>
+      </section>
+
+      <section id="observe">
+        <h2>What you can observe</h2>
+        <div class="cards two">
+          <article>
+            <h3>Public API</h3>
+            <p><a href="https://rotk.app/api/status">https://rotk.app/api/status</a> — player count and capacity. No join list. The launcher shows the same number in the server menu.</p>
+          </article>
+          <article>
+            <h3>Your client logs</h3>
+            <p><code>Logs\Login.log</code> (LoginUdp_16, which login port), <code>Logs\NetInfo.log</code> (OnConnect, ZoneDetails, Begin Zoning, your name on ClientSent).</p>
+          </article>
+          <article>
+            <h3>Wireshark on your NIC</h3>
+            <p>Your launch path, ports, TLS SNI, plaintext :8080. Not other players’ logins, not decrypted zone gameplay, not launcher keys.</p>
+          </article>
+          <article>
+            <h3>In a match</h3>
+            <p>Nametags and kill feed. That is “who is in this BR,” not “who connected to the VPS.”</p>
+          </article>
+        </div>
+        <p class="note warn">
+          Do not share raw <code>.pcapng</code> files casually. They include your
+          IP and play times. Loopback captures of streaming software can also
+          contain Twitch/Kick stream keys.
+        </p>
+      </section>
+
+      <section id="limits">
+        <h2>Limits, leftovers, and what assets cannot fix</h2>
+        <h3>Client still phones home</h3>
+        <p>
+          A live capture still opened TLS to auth.daybreakgames.com,
+          www.xboxab.com, and api.redshell.io. Those are leftover
+          original-client endpoints, not ROTK gameplay. Crash reporter in
+          ClientConfig still points at recap.daybreakgames.com:15081.
+        </p>
+        <table>
+          <thead>
+            <tr><th>Symptom</th><th>Lives in</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>One-click helmet equip</td><td>Client UI drag vs click (Daybreak’s Feb 2018 “drag leniency” patch) and/or zone EquipItem handling. Not in the asset feed (no ui_x64 packs).</td></tr>
+            <tr><td>Game SFX / Wwise</td><td>Resources/Audio/pc9 on the Steam copy. Not in feed.json. Voice issues are Vivox (launcher proxy), not the asset repo.</td></tr>
+            <tr><td>Who joined the server by name</td><td>Server logs / admin tools. Public status is a count only.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="sources">
+        <h2>Sources</h2>
+        <ul>
+          <li><a href="https://rotk.app/project">rotk.app/project</a></li>
+          <li><a href="https://rotk.app/play">rotk.app/play</a></li>
+          <li><a href="https://rotk.app/api/status">rotk.app/api/status</a></li>
+          <li><a href="https://github.com/MzKaxD/rotk-launcher">github.com/MzKaxD/rotk-launcher</a> (README, docs/asset-packs.md, v1.4.2)</li>
+          <li><a href="https://github.com/h1z1rotk/assets">github.com/h1z1rotk/assets</a></li>
+        </ul>
+        <p class="muted small">
+          Compiled from public pages plus a local ClientConfig.ini and a GAME 2
+          packet capture on 2026-08-31. Fan documentation only. ROTK and H1Z1
+          marks belong to their respective owners.
+        </p>
+      </section>
+    </main>
+  </div>
+  <script>
+    const links = document.querySelectorAll(".nav a");
+    const sections = [...links].map((a) => document.querySelector(a.getAttribute("href")));
+    const io = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        links.forEach((a) => a.classList.toggle("active", a.getAttribute("href") === "#" + entry.target.id));
+      }
+    }, { rootMargin: "-20% 0px -70% 0px" });
+    sections.forEach((el) => el && io.observe(el));
+  </script>
+</body>
+</html>
