@@ -22,6 +22,7 @@
         <a href="#launcher">Launcher &amp; client</a>
         <a href="#assets">Asset packs</a>
         <a href="#integrity">Integrity</a>
+        <a href="#legal">Legal</a>
         <a href="#sources">Sources</a>
       </nav>
     </aside>
@@ -55,6 +56,11 @@
           Online games need a client and a server. ROTK rebuilds authentication, worlds, players,
           inventories, combat, matchmaking, and game rules so a legitimate Z1
           Battle Royale install can talk to community servers again.
+        </p>
+        <p class="note warn">
+          Z1 Battle Royale is still a live Daybreak service on Steam. ROTK is
+          an unauthorized emulator of that live title, not a revival of a
+          shut-down game. See <a href="#legal">Legal</a>.
         </p>
         <blockquote>
           “We are not recreating the H1Z1 client. We are building a server capable
@@ -352,6 +358,124 @@
         </p>
       </section>
 
+      <section id="legal">
+        <h2>Legal</h2>
+        <p class="muted small">
+          Fan analysis of public contracts and statutes, not legal advice. No
+          court has ruled on ROTK. Daybreak has already sued a similar
+          live-service emulator and won a federal preliminary injunction.
+        </p>
+        <p>
+          <a href="https://store.steampowered.com/app/433850/Z1_Battle_Royale/">Z1 Battle Royale</a>
+          (Steam app 433850) is still published by Daybreak Game Company and
+          still has official servers. Steam still lists concurrent players in
+          2026. That is a live service. ROTK points a licensed copy of that
+          same client at unofficial login, gateway, and zone hosts. “We do not
+          redistribute H1Z1.exe” and “non-commercial” do not make that lawful.
+          You do not own the client; Daybreak licenses it, and the license
+          ends if you use it this way.
+        </p>
+
+        <h3>Daybreak Terms of Service</h3>
+        <p>
+          The
+          <a href="https://www.daybreakgames.com/terms-of-service">Daybreak Terms of Service</a>
+          (retrieved 2026-08-31) forbid the entire ROTK stack in plain
+          language. Players agree not to:
+        </p>
+        <ul>
+          <li>Attempt to play any Daybreak Game on any server that is not controlled or authorized by Daybreak or its designees.</li>
+          <li>Create, use or provide any server emulator or other site where any Daybreak Game may be played, or post or distribute emulators or related tools without Daybreak’s written permission.</li>
+          <li>Modify any part of any Daybreak Game, including any client and/or server.</li>
+          <li>Attempt to disable or circumvent measures that restrict access to accounts, servers, databases, data, computers, and networks.</li>
+          <li>Decrypt or modify data transmitted between the game software and Daybreak’s game servers.</li>
+          <li>Use any Daybreak Game in connection with commercial activity, including e-sports or group competition, without prior written consent — which covers advertised tournaments and leagues.</li>
+        </ul>
+        <p>
+          The license grant is explicit: the client-side software may not be
+          “used as a stand-alone game (without connecting to Daybreak’s game
+          servers), or used in connection with non-Daybreak game servers.”
+          Breach automatically terminates the ToS and EULA. You are then
+          required to stop playing and delete the software. That is the
+          contract position for every ROTK player and operator, not a gray area.
+        </p>
+
+        <h3>Daybreak EULA</h3>
+        <p>
+          The
+          <a href="https://www.daybreakgames.com/eula">End User License Agreement</a>
+          is narrower still. Section 4 says any use outside the license
+          infringes Daybreak’s copyrights. It specifically bans:
+        </p>
+        <ul>
+          <li>4.2 reverse engineering, decompiling, or reconstructing protocols, file formats, or interfaces.</li>
+          <li>4.3 creating, facilitating, hosting, or linking to play through “interception, emulation or redirection of the communication protocols used by Daybreak,” including protocol emulation, tunneling, packet sniffing, and utility programs — “unauthorized network play over the Internet.”</li>
+          <li>4.4 creating, facilitating, or maintaining any unauthorized connection to any Game.</li>
+          <li>4.5 mining, decrypting, or modifying data between client and server.</li>
+        </ul>
+        <blockquote>
+          “PLEASE NOTE THAT UNAUTHORIZED USE OF THE DAYBREAK PROPERTY MAY
+          SUBJECT YOU TO MONETARY DAMAGES AND OTHER CIVIL AND CRIMINAL
+          PENALTIES, INCLUDING, WITHOUT LIMITATION, FOR COPYRIGHT INFRINGEMENT.”
+          <cite>— Daybreak EULA § 3.1</cite>
+        </blockquote>
+        <p>
+          ROTK’s public design is protocol emulation plus a launcher that
+          writes unofficial servers into ClientConfig.ini and starts H1Z1.exe
+          against them. That is the conduct 4.3 and 4.4 name. Copying the
+          Steam tree into an isolated folder does not create a new license. It
+          is still Daybreak’s client, used with non-Daybreak servers.
+        </p>
+
+        <h3>Copyright and the DMCA</h3>
+        <p>
+          ToS is a contract. Copyright and the Digital Millennium Copyright
+          Act are federal law. Daybreak owns the Forgelight client, art,
+          animations, maps, audio, names, and the service those assets were
+          built to talk to. A third-party login/zone that reproduces that
+          service so the copyrighted client will run is a derivative,
+          unauthorized public performance of the game. “We wrote our own
+          server” does not give you the right to host H1Z1. “Players already
+          bought it on Steam” licenses play on Daybreak’s servers, not yours.
+        </p>
+        <p>
+          In
+          <a href="https://www.courtlistener.com/docket/70555215/daybreak-game-company-llc-v-takahashi/">Daybreak Game Company LLC v. Takahashi</a>
+          (S.D. Cal. No. 3:25-cv-01489), Daybreak sued operators of an
+          EverQuest private server. The court granted a preliminary injunction
+          in September 2025, finding likely copyright infringement and likely
+          DMCA circumvention under 17 U.S.C. § 1201. The operators’ argument
+          that they never connected to Daybreak’s servers did not save them:
+          pointing the official client at an emulator, and distributing the
+          tools to do it, was treated as bypassing the technological measures
+          that control access to the copyrighted work. A consent judgment and
+          permanent injunction followed in 2026.
+        </p>
+        <p>
+          ROTK is the same pattern on a title that is still live: isolate
+          Daybreak’s client, replace authentication, emulate LoginUdp / zone
+          protocols, ship a launcher and asset feed so other people can play.
+          Abandoned-game preservation arguments do not apply while official
+          Z1BR servers still exist.
+        </p>
+
+        <div class="cards two">
+          <article>
+            <h3>What “non-commercial” does not do</h3>
+            <p>Copyright infringement does not require a price tag. Daybreak’s ToS bans emulators with or without payment. Discord cosmetics and tournaments make the commercial overlay worse, not better.</p>
+          </article>
+          <article>
+            <h3>Players are in the contract too</h3>
+            <p>Launching through ROTK is playing on an unauthorized server and using an emulator. That terminates the Daybreak license and is grounds for account action on Steam / Daybreak. Operators carry the copyright and DMCA exposure of hosting it.</p>
+          </article>
+        </div>
+        <p class="note warn">
+          This page documents a live-service emulator. It is not permission
+          to run one, play on one, or treat unofficial servers as legal
+          because the official population is small.
+        </p>
+      </section>
+
       <section id="sources">
         <h2>Sources</h2>
         <ul>
@@ -361,6 +485,10 @@
           <li><a href="https://github.com/MzKaxD/rotk-launcher">github.com/MzKaxD/rotk-launcher</a> (README, docs/asset-packs.md, v1.4.2)</li>
           <li><a href="https://github.com/h1z1rotk/assets">github.com/h1z1rotk/assets</a></li>
           <li>ROTK Discord · About-the-project (transcribed 2026-08-31)</li>
+          <li><a href="https://www.daybreakgames.com/terms-of-service">daybreakgames.com/terms-of-service</a></li>
+          <li><a href="https://www.daybreakgames.com/eula">daybreakgames.com/eula</a></li>
+          <li><a href="https://store.steampowered.com/app/433850/Z1_Battle_Royale/">Steam · Z1 Battle Royale</a></li>
+          <li><a href="https://www.courtlistener.com/docket/70555215/daybreak-game-company-llc-v-takahashi/">Daybreak v. Takahashi, 3:25-cv-01489</a></li>
         </ul>
         <p class="muted small">
           Compiled from public pages plus a local ClientConfig.ini and a GAME 2
