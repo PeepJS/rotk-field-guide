@@ -21,8 +21,6 @@
         <a href="#launcher">Launcher &amp; client</a>
         <a href="#assets">Asset packs</a>
         <a href="#integrity">Integrity</a>
-        <a href="#observe">What you can observe</a>
-        <a href="#limits">Limits &amp; leftovers</a>
         <a href="#sources">Sources</a>
       </nav>
     </aside>
@@ -310,54 +308,6 @@
           UserOptions.ini (graphics/audio) and InputProfile_User.xml are excluded
           from the root so settings do not fail attestation.
         </p>
-      </section>
-
-      <section id="observe">
-        <h2>What you can observe</h2>
-        <div class="cards two">
-          <article>
-            <h3>Public API</h3>
-            <p><a href="https://rotk.app/api/status">https://rotk.app/api/status</a> — player count and capacity. No join list. The launcher shows the same number in the server menu.</p>
-          </article>
-          <article>
-            <h3>Your client logs</h3>
-            <p><code>Logs\Login.log</code> (LoginUdp_16, which login port), <code>Logs\NetInfo.log</code> (OnConnect, ZoneDetails, Begin Zoning, your name on ClientSent).</p>
-          </article>
-          <article>
-            <h3>Wireshark on your NIC</h3>
-            <p>Your launch path, ports, TLS SNI, plaintext :8080. Not other players’ logins, not decrypted zone gameplay, not launcher keys.</p>
-          </article>
-          <article>
-            <h3>In a match</h3>
-            <p>Nametags and kill feed. That is “who is in this BR,” not “who connected to the VPS.”</p>
-          </article>
-        </div>
-        <p class="note warn">
-          Do not share raw <code>.pcapng</code> files casually. They include your
-          IP and play times. Loopback captures of streaming software can also
-          contain Twitch/Kick stream keys.
-        </p>
-      </section>
-
-      <section id="limits">
-        <h2>Limits, leftovers, and what assets cannot fix</h2>
-        <h3>Client still phones home</h3>
-        <p>
-          A live capture still opened TLS to auth.daybreakgames.com,
-          www.xboxab.com, and api.redshell.io. Those are leftover
-          original-client endpoints, not ROTK gameplay. Crash reporter in
-          ClientConfig still points at recap.daybreakgames.com:15081.
-        </p>
-        <table>
-          <thead>
-            <tr><th>Symptom</th><th>Lives in</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>One-click helmet equip</td><td>Client UI drag vs click (Daybreak’s Feb 2018 “drag leniency” patch) and/or zone EquipItem handling. Not in the asset feed (no ui_x64 packs).</td></tr>
-            <tr><td>Game SFX / Wwise</td><td>Resources/Audio/pc9 on the Steam copy. Not in feed.json. Voice issues are Vivox (launcher proxy), not the asset repo.</td></tr>
-            <tr><td>Who joined the server by name</td><td>Server logs / admin tools. Public status is a count only.</td></tr>
-          </tbody>
-        </table>
       </section>
 
       <section id="sources">
