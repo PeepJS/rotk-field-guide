@@ -5,3 +5,5 @@ Unofficial static notes on [Return of the King](https://rotk.app/project), an in
 This is fan documentation compiled from public pages (rotk.app, the open-source launcher, the assets catalog) plus a local client config. It is **not** affiliated with Daybreak Game Company or the ROTK project.
 
 Live site: GitHub Pages on this repository.
+
+https://peepjs.github.io/rotk-field-guide/#overview
